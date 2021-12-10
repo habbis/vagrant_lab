@@ -262,6 +262,8 @@ key: https://github.com/habbis.keys
 
 ```
 
+server-lite.yml is symlinked to all folders except those with the name docker.
+
 ```
 ---
 - hosts: all
