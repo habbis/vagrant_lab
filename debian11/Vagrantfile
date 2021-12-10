@@ -29,6 +29,6 @@ Vagrant.configure("2") do |config|
 
   # Install avahi on all machines  
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "server-lite.yml"
+    ansible.playbook = "../server-lite.yml"
   end
 end
