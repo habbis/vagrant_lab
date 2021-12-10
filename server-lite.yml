@@ -1,0 +1,118 @@
+---
+- hosts: all
+  #remote_user: root
+  remote_user: vagrant
+  #remote_user: user
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: upgrade all packages
+    package:
+      name: "*"
+      state: latest
+
+  - name: Install packages ubuntu and debian
+    package:
+      name:
+        #- cockpit
+        - curl
+        - wget
+        - python
+        - python3
+        - python3-pip
+        - git
+        - vim
+        - apt-utils
+        - lvm2
+      state: present
+    ignore_errors: yes
+
+  - name: add group admins for nopasswd sudo
+    group:
+      name: admins
+      state: present
+
+
+  - name: Install packages centos7 and RHEL7
+    package:
+      name:
+        - cockpit
+        #- podman
+        - curl
+        - wget
+        - python2
+        - python3
+        - python3-pip
+        - git
+        - vim
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
+        - epel-release
+        - sudo
+        - bash-completion
+        #- centos-release-scl-rh
+        #- centos-release-scl
+      state: present
+    ignore_errors: yes
+
+
+  - name: sudoers file
+    get_url:
+      url: https://raw.githubusercontent.com/habbis/sudoers/master/admins
+      dest: /etc/sudoers.d/
+      mode: '0440'
+
+  - name: Download sshd_config from git repo
+    get_url:
+      url: https://gitlab.com/habbis/openssh_config/raw/master/sshd_config
+      dest: /etc/ssh/
+      mode: '0744'
+
+  #- name: Create group for docker
+    #group:
+      #name: docker
+      #state: absent
+
+  - name: add right sftp server for rhel/centos in sshd_config
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '/usr/lib/openssh/sftp-server'
+      line: "Subsystem  sftp /usr/libexec/openssh/sftp-server"
+    when: ansible_pkg_mgr == "yum"
+
+  - name: add user called user with sudo right
+    user:
+      name: user
+      shell: /bin/bash
+      groups: admins
+      append: yes
+
+  - name: set authorized keys from github to users
+    authorized_key:
+      user: "{{ item }}"
+      state: present
+      key: https://github.com/habbis.keys
+    loop:
+      - root
+      - ansible
+    ignore_errors: yes
+
+  - name: set authorized keys from github to user
+    authorized_key:
+      user: root
+      state: present
+      key: https://github.com/habbis.keys
+    ignore_errors: yes
+
+  - name: reload sshd
+    service:
+      name: sshd
+      state: reloaded
+
+      #- name: enable cockpit systemd service
+      #firewalld:
+      #service: cockpit
+      #permanent: yes
+      #state: enabled
