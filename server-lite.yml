@@ -84,7 +84,7 @@
 
   - name: add user called user with sudo right
     user:
-      name: user
+      name: ansible
       shell: /bin/bash
       groups: admins
       append: yes
