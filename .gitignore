@@ -1,1 +1,5 @@
 .vagrant
+.idea
+centos_steam9/.vagrant
+rocky9/.vagrant
+debian12/.vagrant

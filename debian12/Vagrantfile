@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+#BOX_IMAGE = "generic/centos8"
+BOX_IMAGE = "bento/debian-12"
+NODE_COUNT = 0
+
+Vagrant.configure("2") do |config|
+    config.vm.provider "virtualbox"
+    #config.vm.provider "vmware_desktop"
+    #config.vm.provider "hyperv"
+    #config.vm.box = "hashicorp/bionic64"
+    config.vm.define "deb12master" do |subconfig|
+    subconfig.vm.box = BOX_IMAGE
+    subconfig.vm.hostname = "deb12master"
+    subconfig.vm.network "private_network", ip: "192.168.56.80"
+  end
+
+  (1..NODE_COUNT).each do |i|
+    config.vm.define "deb12node#{i}" do |subconfig|
+      subconfig.vm.box = BOX_IMAGE
+      subconfig.vm.hostname = "c9node#{i}"
+      subconfig.vm.network "private_network", ip: "192.168.56.#{i + 80}"
+    end
+  end
+
+    ####### Install Puppet Agent #######
+    config.vm.provision "bootstrap",
+      before: :all,
+      type: "shell",
+      path: "../bootstrap.sh"
+
+    ####### Provision #######
+    config.vm.provision :puppet do |puppet|
+        puppet.module_path = "../site"
+        puppet.options = "--verbose --debug"
+      end
+  end

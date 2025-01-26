@@ -1,0 +1,37 @@
+{
+    "name": "habbis-server_lite",
+    "version": "0.1.0",
+    "author": "habbis",
+    "summary": "standard setup for vagrant boxes",
+    "license": "Apache-2.0",
+    "source": "https://github.com/habbis/vagrant_lab",
+    "dependencies": [],
+    "operatingsystem_support": [
+      {
+        "operatingsystem": "RedHat",
+        "operatingsystemrelease": ["9"]
+      },
+      {
+        "operatingsystem": "Rocky",
+        "operatingsystemrelease": ["9"]
+      },
+      {
+        "operatingsystem": "centos",
+        "operatingsystemrelease": ["9"]
+      },
+      {
+        "operatingsystem": "Debian",
+        "operatingsystemrelease": ["12"]
+      },
+      {
+        "operatingsystem": "Ubuntu",
+        "operatingsystemrelease": ["22.04"]
+      }
+    ],
+    "requirements": [
+      {
+        "name": "puppet",
+        "version_requirement": ">= 7.24 < 9.0.0"
+      }
+    ]
+  }
